@@ -24,7 +24,7 @@ pipeline {
 
                     $class: 'AmazonWebServicesCredentialsBinding',
 
-                    credentialsId: 'aws-credentials-id'
+                    credentialsId: 'aws-creds1'
 
                 ]]) {
 
