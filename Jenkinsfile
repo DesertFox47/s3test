@@ -1,48 +1,29 @@
 pipeline {
-
     agent any
- 
+
     environment {
-
-        AWS_DEFAULT_REGION = 'eu-central-1'
-
-        S3_BUCKET = 'testnallangi1234'
-
-        S3_FILE = 's3://testnallangi1234/test/Screenshot 2024-08-09 070625.png'
-
-        LOCAL_FILE = 'file.zip'
-
+        AWS_DEFAULT_REGION = 'eu-north-1'
+        S3_BUCKET = 'jenkinsbucket'
     }
- 
+
     stages {
-
-        stage('Download from S3') {
-
+        stage('Build') {
             steps {
-
-                withCredentials([[
-
-                    $class: 'AmazonWebServicesCredentialsBinding',
-
-                    credentialsId: 'aws-creds1'
-
-                ]]) {
-
-                    bat '''
-
-                        aws s3 ls
-
-                        aws s3 cp s3://testnallangi1234/test/sslrenew C:\\Users\\xxnallan
-
-                    '''
-
-                }
-
+                bat 'mvnd clean package'
             }
-
         }
 
+        stage('Upload to S3') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds1'
+                ]]) {
+                    bat """
+                    aws s3 cp target/my-app.war s3://%S3_BUCKET%/
+                    """
+                }
+            }
+        }
     }
-
 }
- 
